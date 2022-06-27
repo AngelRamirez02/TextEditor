@@ -7,6 +7,8 @@ package ramirez.angel.editor;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.*;
 
 /**
@@ -111,51 +113,98 @@ public final class Panel extends JPanel {
                                 if (!existePath) {
                                     File archivo = selectorFile.getSelectedFile();
                                     listFile.set(tpanel.getSelectedIndex(), archivo);
-                                    
+
                                     FileReader entrada = new FileReader(listFile.get(tpanel.getSelectedIndex()).getPath());
                                     BufferedReader myBuffer = new BufferedReader(entrada);
-                                    String linea="";
-                                    String titulo=listFile.get(tpanel.getSelectedIndex()).getName();
+                                    String linea = "";
+                                    String titulo = listFile.get(tpanel.getSelectedIndex()).getName();
                                     //el titulo se agrega a la pestaña del panel que se crea donde se encuentra archivo que el usuario selecciones
                                     tpanel.setTitleAt(tpanel.getSelectedIndex(), titulo);
-                                    while(linea != null){
+                                    while (linea != null) {
                                         //en el ciclo se lee linea por linea del archivo y se almacena en el string linea
                                         linea = myBuffer.readLine();
-                                        if(linea != null)
-                                            //ListAreaText.get(tpanel.getSelectedIndex()).setText(linea);
-                                            Utilidades.append(linea+"\n", ListAreaText.get(tpanel.getSelectedIndex()));
+                                        if (linea != null) //ListAreaText.get(tpanel.getSelectedIndex()).setText(linea);
+                                        {
+                                            Utilidades.append(linea + "\n", ListAreaText.get(tpanel.getSelectedIndex()));
+                                        }
                                     }
-                                }else{
+                                } else {
                                     //si el archivo ya está abierto seleccionamos el panel donde está el texto
-                                    for(int i=0; i<tpanel.getTabCount(); i++){
-                                        File f= selectorFile.getSelectedFile();         
-                                        if(listFile.get(i).getPath().equals(f.getPath())){
+                                    for (int i = 0; i < tpanel.getTabCount(); i++) {
+                                        File f = selectorFile.getSelectedFile();
+                                        if (listFile.get(i).getPath().equals(f.getPath())) {
                                             tpanel.setSelectedIndex(i);
                                             //remueve el panel que se crea demas al abrir el mismo archivo
-                                            ListAreaText.remove(tpanel.getTabCount()-1);
-                                            listScroll.remove(tpanel.getTabCount()-1);
-                                            listFile.remove(tpanel.getTabCount()-1);
-                                            tpanel.remove(tpanel.getTabCount()-1);
+                                            ListAreaText.remove(tpanel.getTabCount() - 1);
+                                            listScroll.remove(tpanel.getTabCount() - 1);
+                                            listFile.remove(tpanel.getTabCount() - 1);
+                                            tpanel.remove(tpanel.getTabCount() - 1);
                                             contadorPanel--;
                                             break;
                                         }
-                                    }      
+                                    }
                                 }
-                            } catch (IOException e1) {    
+                            } catch (IOException e1) {
                             }
-                        }else{
+                        } else {
                             //si el usuario cancela al elegir el archivo se elimina el area de texto que se crea por defecto
                             int seleccion = tpanel.getSelectedIndex();
-                            if (seleccion !=-1){
+                            if (seleccion != -1) {
                                 ListAreaText.remove(tpanel.getTabCount() - 1);
                                 listScroll.remove(tpanel.getTabCount() - 1);
                                 listFile.remove(tpanel.getTabCount() - 1);
                                 tpanel.remove(tpanel.getTabCount() - 1);
-                                contadorPanel--; 
-                            }   
+                                contadorPanel--;
+                            }
                         }
                     }
                 });
+            } //-----------------Accion para guardar cambios en el archivo----------------
+            else if (accion.equals("Guardar")) {
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        //guardar si el archivo no existe
+                        if (listFile.get(tpanel.getSelectedIndex()).getPath().equals("")) {
+                            JFileChooser guardarArchivos = new JFileChooser();
+                            int opc = guardarArchivos.showSaveDialog(null);
+
+                            if (opc == JFileChooser.APPROVE_OPTION) {
+                                File f = guardarArchivos.getSelectedFile();
+                                listFile.set(tpanel.getSelectedIndex(), f);
+                                tpanel.setTitleAt(tpanel.getSelectedIndex(), f.getName());
+
+                                try {
+                                    FileWriter fw = new FileWriter(listFile.get(tpanel.getSelectedIndex()).getPath());
+                                    String txt = ListAreaText.get(tpanel.getSelectedIndex()).getText();
+
+                                    for (int i = 0; i < txt.length(); i++) {
+                                        fw.write(txt.charAt(i));
+                                    }
+                                    fw.close();
+                                } catch (IOException ex) {
+                                    Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
+                                }
+
+                            }
+                        } else {
+                            try {
+                                FileWriter fw = new FileWriter(listFile.get(tpanel.getSelectedIndex()).getPath());
+                                String txt = ListAreaText.get(tpanel.getSelectedIndex()).getText();
+
+                                for (int i = 0; i < txt.length(); i++) {
+                                    fw.write(txt.charAt(i));
+                                }
+                                fw.close();
+                            } catch (IOException ex) {
+                                Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                });
+
+            } else if (accion.equals("Guardar como")) {
+
             }
         } else if (menu.equals("Editar")) {
             editar.add(elementoItem);
