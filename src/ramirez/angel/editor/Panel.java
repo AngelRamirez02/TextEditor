@@ -164,7 +164,7 @@ public final class Panel extends JPanel {
                 elementoItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
-                        //guardar si el archivo no existe
+                        //guardar como si el archivo no existe
                         if (listFile.get(tpanel.getSelectedIndex()).getPath().equals("")) {
                             JFileChooser guardarArchivos = new JFileChooser();
                             int opc = guardarArchivos.showSaveDialog(null);
@@ -187,6 +187,7 @@ public final class Panel extends JPanel {
                                 }
 
                             }
+                            //si el archivo existe guardar los cambios
                         } else {
                             try {
                                 FileWriter fw = new FileWriter(listFile.get(tpanel.getSelectedIndex()).getPath());
@@ -202,9 +203,33 @@ public final class Panel extends JPanel {
                         }
                     }
                 });
-
+                //boton de guardare como
             } else if (accion.equals("Guardar como")) {
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        JFileChooser guardarArchivos = new JFileChooser();
+                        int opc = guardarArchivos.showSaveDialog(null);
 
+                        if (opc == JFileChooser.APPROVE_OPTION) {
+                            File f = guardarArchivos.getSelectedFile();
+                            listFile.set(tpanel.getSelectedIndex(), f);
+                            tpanel.setTitleAt(tpanel.getSelectedIndex(), f.getName());
+
+                            try {
+                                FileWriter fw = new FileWriter(listFile.get(tpanel.getSelectedIndex()).getPath());
+                                String txt = ListAreaText.get(tpanel.getSelectedIndex()).getText();
+
+                                for (int i = 0; i < txt.length(); i++) {
+                                    fw.write(txt.charAt(i));
+                                }
+                                fw.close();
+                            } catch (IOException ex) {
+                                Logger.getLogger(Panel.class.getName()).log(Level.SEVERE, null, ex);
+                            }
+                        }
+                    }
+                });
             }
         } else if (menu.equals("Editar")) {
             editar.add(elementoItem);
