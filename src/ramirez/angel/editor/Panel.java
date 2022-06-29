@@ -7,9 +7,10 @@ package ramirez.angel.editor;
 import java.awt.event.*;
 import java.io.*;
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.logging.*;
 import javax.swing.*;
+import javax.swing.text.DefaultEditorKit;
+import javax.swing.undo.*;
 
 /**
  * @author Angel Ramirez
@@ -42,12 +43,12 @@ public final class Panel extends JPanel {
         //--------------------------------------------------------------
 
         //--------------------Elementos del menu editar--------------
-        creaItem("Deshacer", "Editar", "");
-        creaItem("Rehacer", "Editar", "");
+        creaItem("Deshacer", "Editar", "deshacer");
+        creaItem("Rehacer", "Editar", "rehacer");
         editar.addSeparator();
-        creaItem("Cortar", "Editar", "");
-        creaItem("Copiar", "Editar", "");
-        creaItem("Pegar", "Editar", "");
+        creaItem("Cortar", "Editar", "cortar");
+        creaItem("Copiar", "Editar", "copiar");
+        creaItem("Pegar", "Editar", "pegar");
         //-----------------------------------------------------------------
 
         //-------------------Elementos del menu seleccion---------------
@@ -70,6 +71,7 @@ public final class Panel extends JPanel {
         listFile = new ArrayList<File>();
         ListAreaText = new ArrayList<JTextPane>();
         listScroll = new ArrayList<JScrollPane>();
+        ListManager = new ArrayList<UndoManager>();
         //---------------------------------------------
 
         //--------------------Metodos de añadir-------------
@@ -233,6 +235,34 @@ public final class Panel extends JPanel {
             }
         } else if (menu.equals("Editar")) {
             editar.add(elementoItem);
+            if (accion.equals("deshacer")) {
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (ListManager.get(tpanel.getSelectedIndex()).canUndo())//if para verificar si se pueden deshacer cambios
+                        {
+                            ListManager.get(tpanel.getSelectedIndex()).undo();//undo para deshacer
+                        }
+                    }
+                });
+            } else if (accion.equals("rehacer")) {
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (ListManager.get(tpanel.getSelectedIndex()).canRedo())//if para verificar si se pueden rehacer cambios
+                        {
+                            ListManager.get(tpanel.getSelectedIndex()).redo();//redo para rehacer  
+                        }
+                    }
+                });
+                //DefaultEditorKit implementa clases para relizar las acciones de cortar, copiar y pegar
+            } else if (accion.equals("cortar")) {
+                elementoItem.addActionListener(new DefaultEditorKit.CutAction());
+            } else if (accion.equals("copiar")) {
+                elementoItem.addActionListener(new DefaultEditorKit.CopyAction());
+            } else if (accion.equals("pegar")) {
+                elementoItem.addActionListener(new DefaultEditorKit.PasteAction());
+            }
         } else if (menu.equals("Seleccion")) {
             seleccion.add(elementoItem);
         } else if (menu.equals("Ver")) {
@@ -240,16 +270,17 @@ public final class Panel extends JPanel {
         } else if (menu.equals("Apariencia")) {
             apariencia.add(elementoItem);
         }
-
     }
 
     public void creaPanel() {
 
         ventana = new JPanel();
-
         listFile.add(new File(""));
         ListAreaText.add(new JTextPane());
         listScroll.add(new JScrollPane(ListAreaText.get(contadorPanel)));
+        ListManager.add(new UndoManager());//sirve para rastrear los cambios del area de texto
+        
+        ListAreaText.get(contadorPanel).getDocument().addUndoableEditListener(ListManager.get(contadorPanel));
 
         ventana.add(listScroll.get(contadorPanel));
 
@@ -271,6 +302,7 @@ public final class Panel extends JPanel {
     private ArrayList<JTextPane> ListAreaText;
     private ArrayList<File> listFile;
     private ArrayList<JScrollPane> listScroll;
+    private ArrayList<UndoManager> ListManager;
     private JMenuBar menu;
     private JMenu archivo, editar, seleccion, ver, apariencia;
     private JMenuItem elementoItem;
