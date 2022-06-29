@@ -4,15 +4,17 @@
  */
 package ramirez.angel.editor;
 
-import javax.swing.JTextPane;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Document;
+import java.util.*;
+import javax.swing.*;
+import javax.swing.text.*;
+
 
 /**
  *
  * @author ar275
  */
 public class Utilidades {
+//-------------------------------Agrega texto al final-----------------------------
 
     public static void append(String linea, JTextPane areaText) {
         try {
@@ -23,4 +25,27 @@ public class Utilidades {
 
         }
     }
+//-----------------------------------------------------------------------------------
+
+//--------------------------Metodo para mostrar numeracion-------------------------------   
+    public static void viewNumeracionInicio(boolean numeacion, JTextPane txtArea, JScrollPane scroll) {
+        if(numeacion){
+            scroll.setRowHeaderView(new TextLineNumber(txtArea));
+        }else{
+            scroll.setRowHeaderView(null);
+        }
+    }
+    
+    public static void viewNumeracion(int contador, boolean numeracion, ArrayList<JTextPane> textarea, ArrayList<JScrollPane> scroll) {
+        if (numeracion) {
+            for (int i = 0; i < contador; i++) {
+                scroll.get(i).setRowHeaderView(new TextLineNumber(textarea.get(i)));
+            }
+        } else {
+            for (int i = 0; i < contador; i++) {
+                scroll.get(i).setRowHeaderView(null);
+            }
+        }
+    }
+//-----------------------------------------------------------------------------------------  
 }

@@ -52,11 +52,11 @@ public final class Panel extends JPanel {
         //-----------------------------------------------------------------
 
         //-------------------Elementos del menu seleccion---------------
-        creaItem("Seleccionar Todos", "Seleccion", "");
+        creaItem("Seleccionar Todos", "Seleccion", "seleccion");
         //------------------------------------------------------------
 
         //---------------Elementos del menu ver-----------------
-        creaItem("Numeración", "Ver", "");
+        creaItem("Numeración", "Ver", "numeracion");
         ver.add(apariencia);
         creaItem("Normal", "Apariencia", "");
         creaItem("Dark", "Apariencia", "");
@@ -265,8 +265,26 @@ public final class Panel extends JPanel {
             }
         } else if (menu.equals("Seleccion")) {
             seleccion.add(elementoItem);
+            if (accion.equals("seleccion")) {
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        ListAreaText.get(tpanel.getSelectedIndex()).selectAll();
+                    }
+                });
+            }
         } else if (menu.equals("Ver")) {
             ver.add(elementoItem);
+            if(accion.equals("numeracion")){
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        numeracion= ! numeracion;
+                       Utilidades.viewNumeracion(contadorPanel, numeracion, ListAreaText, listScroll);
+                    }
+                });
+            }
+            
         } else if (menu.equals("Apariencia")) {
             apariencia.add(elementoItem);
         }
@@ -283,7 +301,8 @@ public final class Panel extends JPanel {
         ListAreaText.get(contadorPanel).getDocument().addUndoableEditListener(ListManager.get(contadorPanel));
 
         ventana.add(listScroll.get(contadorPanel));
-
+        
+        Utilidades.viewNumeracionInicio(numeracion, ListAreaText.get(contadorPanel), listScroll.get(contadorPanel));
         tpanel.addTab("Archivo", ventana);
         tpanel.setSelectedIndex(contadorPanel);
         contadorPanel++;
@@ -293,6 +312,7 @@ public final class Panel extends JPanel {
     //---------------------------Elementos no visibles-------------------------------
     private int contadorPanel = 0;//cuenta los paneles que se crean
     private boolean existenPanel = false;//nos dice si existe un panel creados
+    private boolean numeracion=false;
     //-------------------------------------------
 
     //-----------------------Elementos visuales------------------------------
