@@ -4,14 +4,14 @@
  */
 package ramirez.angel.editor;
 
+import java.awt.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.text.*;
 
 
 /**
- *
- * @author ar275
+* @author ar275
  */
 public class Utilidades {
 //-------------------------------Agrega texto al final-----------------------------
@@ -48,4 +48,34 @@ public class Utilidades {
         }
     }
 //-----------------------------------------------------------------------------------------  
+
+//------------------------------Seccion de apariencia-------------------------------------
+    public static void aBackground(int contador, String tipo, ArrayList<JTextPane> list){
+       if(tipo.equals("W")){
+           for(int i=0; i<contador; i++){
+               list.get(i).selectAll();
+              StyleContext sc = StyleContext.getDefaultStyleContext();
+              //accion para el color de texto
+               AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, Color.BLACK);
+               
+               //para el tipo de texto
+               aset= sc.addAttribute(aset, StyleConstants.FontFamily, "Arial");
+                list.get(i).setCharacterAttributes(aset, true);
+                list.get(i).setBackground(Color.white);
+            }
+        } else if (tipo.equals("D")) {
+            for (int i = 0; i < contador; i++) {
+                list.get(i).selectAll();
+                StyleContext sc = StyleContext.getDefaultStyleContext();
+                //accion para el color de texto
+                AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY, StyleConstants.Foreground, new Color(161,145,123));
+
+                //para el tipo de texto
+                aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Arial");
+                list.get(i).setCharacterAttributes(aset, true);
+                list.get(i).setBackground(new Color(32,33,36));
+            }
+        }
+    }
+//--------------------------------------------------------------------------------------    
 }

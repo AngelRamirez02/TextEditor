@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 import java.util.logging.*;
 import javax.swing.*;
-import javax.swing.text.DefaultEditorKit;
+import javax.swing.text.*;
 import javax.swing.undo.*;
 
 /**
@@ -58,8 +58,8 @@ public final class Panel extends JPanel {
         //---------------Elementos del menu ver-----------------
         creaItem("Numeración", "Ver", "numeracion");
         ver.add(apariencia);
-        creaItem("Normal", "Apariencia", "");
-        creaItem("Dark", "Apariencia", "");
+        creaItem("Normal", "Apariencia", "normal");
+        creaItem("Dark", "Apariencia", "dark");
         //-------------------------------------
 
         //creacion del menu
@@ -130,6 +130,7 @@ public final class Panel extends JPanel {
                                             Utilidades.append(linea + "\n", ListAreaText.get(tpanel.getSelectedIndex()));
                                         }
                                     }
+                                    Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
                                 } else {
                                     //si el archivo ya está abierto seleccionamos el panel donde está el texto
                                     for (int i = 0; i < tpanel.getTabCount(); i++) {
@@ -283,10 +284,31 @@ public final class Panel extends JPanel {
                        Utilidades.viewNumeracion(contadorPanel, numeracion, ListAreaText, listScroll);
                     }
                 });
-            }
-            
+            }           
         } else if (menu.equals("Apariencia")) {
             apariencia.add(elementoItem);
+            if(accion.equals("normal")){
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        tipoStyle="W";
+                        if(tpanel.getTabCount()>0){
+                            Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
+                        }
+                    }
+                });
+            }else if(accion.equals("dark")){
+                elementoItem.addActionListener(new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        tipoStyle="D";
+                        if(tpanel.getTabCount()>0){
+                            Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
+                        }
+                    }
+                });
+            }
+            
         }
     }
 
@@ -306,6 +328,7 @@ public final class Panel extends JPanel {
         tpanel.addTab("Archivo", ventana);
         tpanel.setSelectedIndex(contadorPanel);
         contadorPanel++;
+        Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
         existenPanel = true;
     }
 
@@ -313,9 +336,10 @@ public final class Panel extends JPanel {
     private int contadorPanel = 0;//cuenta los paneles que se crean
     private boolean existenPanel = false;//nos dice si existe un panel creados
     private boolean numeracion=false;
-    //-------------------------------------------
+    private String tipoStyle= "W";
+    //-------------------------------------------------------------------------------
 
-    //-----------------------Elementos visuales------------------------------
+    //-----------------------Elementos visuales------------------------------    
     private JTabbedPane tpanel;
     private JPanel ventana;
     //private JTextPane areaText;   
