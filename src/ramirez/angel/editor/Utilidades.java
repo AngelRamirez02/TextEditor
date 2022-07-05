@@ -5,6 +5,7 @@
 package ramirez.angel.editor;
 
 import java.awt.*;
+import java.net.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.text.*;
@@ -77,5 +78,16 @@ public class Utilidades {
             }
         }
     }
-//--------------------------------------------------------------------------------------    
+//--------------------------------------------------------------------------------------
+
+//----------------------------------Button----------------------------------------------   
+    public static JButton addButton(URL url, Object objContenedor, String rotulo){
+        //cracion del boton 
+        JButton button = new JButton(new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH)));
+        button.setToolTipText(rotulo);
+        
+        ((Container) objContenedor).add(button);
+        return button ;
+    }
+//--------------------------------------------------------------------------------------
 }

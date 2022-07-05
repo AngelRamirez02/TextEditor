@@ -6,6 +6,7 @@ package ramirez.angel.editor;
 
 import java.awt.event.*;
 import java.io.*;
+import java.net.URL;
 import java.util.*;
 import java.util.logging.*;
 import javax.swing.*;
@@ -73,10 +74,46 @@ public final class Panel extends JPanel {
         listScroll = new ArrayList<JScrollPane>();
         ListManager = new ArrayList<UndoManager>();
         //---------------------------------------------
+        
+        //-------------------Barra de herramientas--------------------------
+        herramientas = new JToolBar(JToolBar.VERTICAL);//boton para eliminar la ventana
+        url = Panel.class.getResource("/ramirez/angel/img/marca-x.png");
+        Utilidades.addButton(url, herramientas, "Cerrar pestaña actual").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int seleccion=tpanel.getSelectedIndex();
+                
+                if(seleccion != -1){//si existen pestañas abiertas eliminamos la que esta seleccionada
+                    listScroll.get(tpanel.getSelectedIndex()).setRowHeader(null);
+                    tpanel.remove(seleccion);
+                    ListAreaText.remove(seleccion);
+                    listScroll.remove(seleccion);
+                    ListManager.remove(seleccion);
+                    listFile.remove(seleccion);
+                    
+                    contadorPanel--;
+                    if(tpanel.getSelectedIndex() ==-1){
+                        existenPanel=false;
+                    }
+                }
+            }
+        });
+        
+        //
+        url= Panel.class.getResource("/ramirez/angel/img/mas (1).png");
+        Utilidades.addButton(url, herramientas, "Nuevo archivo").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                creaPanel();
+            }
+        });
+        
+        //------------------------------------------------------------------
 
         //--------------------Metodos de añadir-------------
         add(panelMenu);
         add(tpanel);
+        add(herramientas);
         //----------------------------------------------------
     }
 
@@ -285,7 +322,7 @@ public final class Panel extends JPanel {
                     }
                 });
             }           
-        } else if (menu.equals("Apariencia")) {
+        } else if (menu.equals("Apariencia")) { 
             apariencia.add(elementoItem);
             if(accion.equals("normal")){
                 elementoItem.addActionListener(new ActionListener() {
@@ -350,4 +387,6 @@ public final class Panel extends JPanel {
     private JMenuBar menu;
     private JMenu archivo, editar, seleccion, ver, apariencia;
     private JMenuItem elementoItem;
+    private JToolBar herramientas;
+    private URL url;
 }
