@@ -4,6 +4,7 @@
  */
 package ramirez.angel.editor;
 
+import java.awt.BorderLayout;
 import java.awt.event.*;
 import java.io.*;
 import java.net.URL;
@@ -17,12 +18,15 @@ import javax.swing.undo.*;
  * @author Angel Ramirez
  */
 public final class Panel extends JPanel {
-
     //constrcutor
     public Panel() {
+        setLayout(new BorderLayout());
+        
         //------------Menu--------------------
         JPanel panelMenu = new JPanel();
-
+        panelMenu.setLayout(new BorderLayout());
+        
+        
         menu = new JMenuBar();
         archivo = new JMenu("Archivo");
         editar = new JMenu("Editar");
@@ -64,7 +68,7 @@ public final class Panel extends JPanel {
         //-------------------------------------
 
         //creacion del menu
-        panelMenu.add(menu);
+        panelMenu.add(menu, BorderLayout.NORTH);
 
         //---------------Area de texto-----------------
         tpanel = new JTabbedPane();
@@ -98,7 +102,7 @@ public final class Panel extends JPanel {
                 }
             }
         });
-        
+     
         //
         url= Panel.class.getResource("/ramirez/angel/img/mas (1).png");
         Utilidades.addButton(url, herramientas, "Nuevo archivo").addActionListener(new ActionListener() {
@@ -111,9 +115,9 @@ public final class Panel extends JPanel {
         //------------------------------------------------------------------
 
         //--------------------Metodos de añadir-------------
-        add(panelMenu);
-        add(tpanel);
-        add(herramientas);
+        add(panelMenu, BorderLayout.NORTH);
+        add(tpanel, BorderLayout.CENTER);
+        add(herramientas, BorderLayout.WEST);
         //----------------------------------------------------
     }
 
@@ -352,6 +356,8 @@ public final class Panel extends JPanel {
     public void creaPanel() {
 
         ventana = new JPanel();
+        ventana.setLayout(new BorderLayout());
+        
         listFile.add(new File(""));
         ListAreaText.add(new JTextPane());
         listScroll.add(new JScrollPane(ListAreaText.get(contadorPanel)));
@@ -359,10 +365,10 @@ public final class Panel extends JPanel {
         
         ListAreaText.get(contadorPanel).getDocument().addUndoableEditListener(ListManager.get(contadorPanel));
 
-        ventana.add(listScroll.get(contadorPanel));
-        
-        Utilidades.viewNumeracionInicio(numeracion, ListAreaText.get(contadorPanel), listScroll.get(contadorPanel));
+        ventana.add(listScroll.get(contadorPanel), BorderLayout.CENTER);
         tpanel.addTab("Archivo", ventana);
+        
+        Utilidades.viewNumeracionInicio(numeracion, ListAreaText.get(contadorPanel), listScroll.get(contadorPanel));   
         tpanel.setSelectedIndex(contadorPanel);
         contadorPanel++;
         Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
