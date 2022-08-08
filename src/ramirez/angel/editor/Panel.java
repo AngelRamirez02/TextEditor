@@ -84,6 +84,15 @@ public final class Panel extends JPanel {
         
         //-------------------Barra de herramientas--------------------------
         herramientas = new JToolBar(JToolBar.VERTICAL);//boton para eliminar la ventana
+        //nuevo archivo
+        url= Panel.class.getResource("/ramirez/angel/img/mas (1).png");
+        Utilidades.addButton(url, herramientas, "Nuevo archivo").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                creaPanel();
+            }
+        });
+        //cerrar panel
         url = Panel.class.getResource("/ramirez/angel/img/marca-x.png");
         Utilidades.addButton(url, herramientas, "Cerrar pestaña actual").addActionListener(new ActionListener() {
             @Override
@@ -105,13 +114,25 @@ public final class Panel extends JPanel {
                 }
             }
         });
-     
-        //
-        url= Panel.class.getResource("/ramirez/angel/img/mas (1).png");
-        Utilidades.addButton(url, herramientas, "Nuevo archivo").addActionListener(new ActionListener() {
+        //boton de reahacer
+        url=Panel.class.getResource("/ramirez/angel/img/rehacer-simbolo-de-flecha.png");
+        Utilidades.addButton(url, herramientas, "Rehacer").addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                creaPanel();
+                if (ListManager.get(tpanel.getSelectedIndex()).canRedo()){//if para verificar si se pueden rehacer cambios
+                    
+                    ListManager.get(tpanel.getSelectedIndex()).redo();//redo para rehacer  
+                }
+            }
+        });
+        //boton de deshacer
+        url= Panel.class.getResource("/ramirez/angel/img/deshacer-flecha-circular.png");
+        Utilidades.addButton(url, herramientas, "Deshacer").addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ListManager.get(tpanel.getSelectedIndex()).canUndo()){//if para verificar si se pueden deshacer cambios                
+                    ListManager.get(tpanel.getSelectedIndex()).undo();//undo para deshacer
+                }
             }
         });
         
