@@ -5,12 +5,15 @@
 package ramirez.angel.editor;
 
 import java.awt.BorderLayout;
+import java.awt.Image;
 import java.awt.event.*;
 import java.io.*;
 import java.net.URL;
 import java.util.*;
 import java.util.logging.*;
 import javax.swing.*;
+import javax.swing.event.ChangeEvent;
+import javax.swing.event.ChangeListener;
 import javax.swing.text.*;
 import javax.swing.undo.*;
 
@@ -19,7 +22,7 @@ import javax.swing.undo.*;
  */
 public final class Panel extends JPanel {
     //constrcutor
-    public Panel() {
+    public Panel(JFrame Ventana) {
         setLayout(new BorderLayout());
         
         //------------Menu--------------------
@@ -113,11 +116,68 @@ public final class Panel extends JPanel {
         });
         
         //------------------------------------------------------------------
+        
+        //---------------------------------Panel extra-------------------------------
+        panelExtra= new JPanel();
+        panelExtra.setLayout(new BorderLayout());
+        //alfiler
+        JPanel panelIzquierdo = new JPanel();
+        labelAlfiler = new JLabel();
+        labelAlfiler.setToolTipText("Fijar ventana");
+        url=Panel.class.getResource("/ramirez/angel/img/alfiler.png");
+        labelAlfiler.setIcon(new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+        labelAlfiler.addMouseListener(new MouseAdapter() {
+            //cambia de imagen cuando el cursor pasa sobre esta
+            public void mouseEntered(MouseEvent e){
+                url= Panel.class.getResource("/ramirez/angel/img/alfilerseleccion.png");
+                labelAlfiler.setIcon(new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+                
+            }
+            //detecta cuando se deja de presionar
+            public void mouseExited(MouseEvent e){
+                if(estadoAlfiler){
+                    url= Panel.class.getResource("/ramirez/angel/img/alfilerseleccion.png");
+                    labelAlfiler.setIcon(new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH)));
+                }else{
+                   url=Panel.class.getResource("/ramirez/angel/img/alfiler.png");
+                    labelAlfiler.setIcon(new ImageIcon(new ImageIcon(url).getImage().getScaledInstance(25, 25, Image.SCALE_SMOOTH))); 
+                }
+            }
+            //
+            public void mousePressed(MouseEvent e){
+                estadoAlfiler=! estadoAlfiler;
+                Ventana.setAlwaysOnTop(estadoAlfiler);
+            }
+        });
+    
+        
+        JPanel panelCentro = new JPanel();
+        slider= new JSlider(8,38,14);
+        panelCentro.add(slider);
+        slider.setMajorTickSpacing(6); //separacion entre las barras mas grandes
+        slider.setMinorTickSpacing(2);//separacion entre las barras mas pequeñas
+        //slider.setPaintTicks(true);
+        slider.setPaintLabels(true);
+        slider.setToolTipText("Tamaño de letra");//
+        //accion para cambiar el tamaño de texto
+        slider.addChangeListener(new ChangeListener() {
+            @Override
+            public void stateChanged(ChangeEvent e) {
+                Utilidades.sizeText(slider.getValue(), contadorPanel, ListAreaText);
+            }
+        });
+        
+        panelIzquierdo.add(labelAlfiler);
+        
+        panelExtra.add(panelIzquierdo, BorderLayout.WEST);
+        panelExtra.add(panelCentro, BorderLayout.CENTER);
+        //------------------------------------------------------------------
 
         //--------------------Metodos de añadir-------------
         add(panelMenu, BorderLayout.NORTH);
         add(tpanel, BorderLayout.CENTER);
         add(herramientas, BorderLayout.WEST);
+        add(panelExtra, BorderLayout.SOUTH);
         //----------------------------------------------------
     }
 
@@ -171,7 +231,7 @@ public final class Panel extends JPanel {
                                             Utilidades.append(linea + "\n", ListAreaText.get(tpanel.getSelectedIndex()));
                                         }
                                     }
-                                    Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
+                                    Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText, slider.getValue());
                                 } else {
                                     //si el archivo ya está abierto seleccionamos el panel donde está el texto
                                     for (int i = 0; i < tpanel.getTabCount(); i++) {
@@ -334,7 +394,7 @@ public final class Panel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         tipoStyle="W";
                         if(tpanel.getTabCount()>0){
-                            Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
+                            Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText, slider.getValue());
                         }
                     }
                 });
@@ -344,7 +404,7 @@ public final class Panel extends JPanel {
                     public void actionPerformed(ActionEvent e) {
                         tipoStyle="D";
                         if(tpanel.getTabCount()>0){
-                            Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
+                            Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText, slider.getValue());
                         }
                     }
                 });
@@ -371,7 +431,7 @@ public final class Panel extends JPanel {
         Utilidades.viewNumeracionInicio(numeracion, ListAreaText.get(contadorPanel), listScroll.get(contadorPanel));   
         tpanel.setSelectedIndex(contadorPanel);
         contadorPanel++;
-        Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText);
+        Utilidades.aBackground(contadorPanel, tipoStyle, ListAreaText, slider.getValue() );
         existenPanel = true;
     }
 
@@ -385,6 +445,7 @@ public final class Panel extends JPanel {
     //-----------------------Elementos visuales------------------------------    
     private JTabbedPane tpanel;
     private JPanel ventana;
+    private JPanel panelExtra;
     //private JTextPane areaText;   
     private ArrayList<JTextPane> ListAreaText;
     private ArrayList<File> listFile;
@@ -395,4 +456,8 @@ public final class Panel extends JPanel {
     private JMenuItem elementoItem;
     private JToolBar herramientas;
     private URL url;
+    
+    private boolean estadoAlfiler=false;
+    private JLabel labelAlfiler;
+    private JSlider slider;
 }

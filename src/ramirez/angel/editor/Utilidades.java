@@ -51,7 +51,7 @@ public class Utilidades {
 //-----------------------------------------------------------------------------------------  
 
 //------------------------------Seccion de apariencia-------------------------------------
-    public static void aBackground(int contador, String tipo, ArrayList<JTextPane> list){
+    public static void aBackground(int contador, String tipo, ArrayList<JTextPane> list, int size){
        if(tipo.equals("W")){
            for(int i=0; i<contador; i++){
                list.get(i).selectAll();
@@ -61,6 +61,9 @@ public class Utilidades {
                
                //para el tipo de texto
                aset= sc.addAttribute(aset, StyleConstants.FontFamily, "Arial");
+               //para el tamaño de texto
+               aset=sc.addAttribute(aset, StyleConstants.FontSize, size);
+           
                 list.get(i).setCharacterAttributes(aset, true);
                 list.get(i).setBackground(Color.white);
             }
@@ -73,6 +76,8 @@ public class Utilidades {
 
                 //para el tipo de texto
                 aset = sc.addAttribute(aset, StyleConstants.FontFamily, "Arial");
+                //para el tamaño de texto
+                aset=sc.addAttribute(aset, StyleConstants.FontSize, size);
                 list.get(i).setCharacterAttributes(aset, true);
                 list.get(i).setBackground(new Color(32,33,36));
             }
@@ -90,4 +95,17 @@ public class Utilidades {
         return button ;
     }
 //--------------------------------------------------------------------------------------
+    //Tamaño de texto
+    public static void sizeText(int size, int contador, ArrayList<JTextPane> list){
+        for (int i=0; i<contador; i++){
+            //selecciona todo el texto del area del texto
+            list.get(i).selectAll();
+            //cambia el tamaño del texto
+            StyleContext sc = StyleContext.getDefaultStyleContext();
+            AttributeSet aset = sc.addAttribute(SimpleAttributeSet.EMPTY,StyleConstants.FontSize,size);
+            //
+            list.get(i).setCharacterAttributes(aset, false);
+        }
+    }
+    
 }

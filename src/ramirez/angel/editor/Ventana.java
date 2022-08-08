@@ -16,6 +16,6 @@ public class Ventana extends JFrame{
         setBounds(300, 300, 300, 300);
         setTitle("Text Editor");
         
-        add( new Panel());
+        add( new Panel(this));
     }
 }
