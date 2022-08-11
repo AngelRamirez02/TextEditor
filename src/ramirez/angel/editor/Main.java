@@ -15,7 +15,7 @@ public class Main {
     public static void main(String[] args) {
         Ventana windows = new Ventana();
         windows.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        windows.setVisible(true);
+        windows.setVisible(true); 
     }
     
 }

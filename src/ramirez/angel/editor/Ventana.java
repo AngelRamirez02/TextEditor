@@ -13,7 +13,7 @@ import javax.swing.*;
 public class Ventana extends JFrame{
     //constrcutor 
     public Ventana(){
-        setBounds(300, 300, 300, 300);
+        setBounds(500, 200, 400, 400);
         setTitle("Text Editor");
         
         add( new Panel(this));
