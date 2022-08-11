@@ -28,7 +28,7 @@ public final class Panel extends JPanel {
         //------------Menu--------------------
         JPanel panelMenu = new JPanel();
         panelMenu.setLayout(new BorderLayout());
-        
+        items =new JMenuItem[8];
         
         menu = new JMenuBar();
         archivo = new JMenu("Archivo");
@@ -80,6 +80,8 @@ public final class Panel extends JPanel {
         ListAreaText = new ArrayList<JTextPane>();
         listScroll = new ArrayList<JScrollPane>();
         ListManager = new ArrayList<UndoManager>();
+        
+        Utilidades.desactivaItem(items);
         //---------------------------------------------
         
         //-------------------Barra de herramientas--------------------------
@@ -88,8 +90,9 @@ public final class Panel extends JPanel {
         url= Panel.class.getResource("/ramirez/angel/img/mas (1).png");
         Utilidades.addButton(url, herramientas, "Nuevo archivo").addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e) {
+            public void actionPerformed(ActionEvent e) { 
                 creaPanel();
+                if(existenPanel) Utilidades.activaItems(items);
             }
         });
         //cerrar panel
@@ -110,6 +113,7 @@ public final class Panel extends JPanel {
                     contadorPanel--;
                     if(tpanel.getSelectedIndex() ==-1){
                         existenPanel=false;
+                        Utilidades.desactivaItem(items);
                     }
                 }
             }
@@ -247,19 +251,22 @@ public final class Panel extends JPanel {
                     @Override
                     public void actionPerformed(ActionEvent e) {
                         creaPanel();
+                        if(existenPanel) Utilidades.activaItems(items);
                     }
                 });
             } else if (accion.equals("Abrir")) {//acacion para abrir archivos y directorios
                 elementoItem.addActionListener(new ActionListener() {
                     @Override
-                    public void actionPerformed(ActionEvent e) {//FileChooser nos permite elejir los archivos
+                    public void actionPerformed(ActionEvent e) {
                         creaPanel();
-                        JFileChooser selectorFile = new JFileChooser();
+                        
+                        JFileChooser selectorFile = new JFileChooser();//FileChooser nos permite elejir los archivos
                         selectorFile.setFileSelectionMode(JFileChooser.FILES_AND_DIRECTORIES);
-                        selectorFile.showOpenDialog(ListAreaText.get(tpanel.getSelectedIndex()));
+                        //selectorFile.showOpenDialog(ListAreaText.get(tpanel.getSelectedIndex()));
                         int resultado = selectorFile.showOpenDialog(ListAreaText.get(tpanel.getSelectedIndex()));
 
                         if (resultado == JFileChooser.APPROVE_OPTION) {
+                            if(existenPanel) Utilidades.activaItems(items);//para activar los items                       
                             try {
                                 boolean existePath = false;
                                 for (int i = 0; i < tpanel.getTabCount(); i++) {
@@ -320,6 +327,7 @@ public final class Panel extends JPanel {
                 });
             } //-----------------Accion para guardar cambios en el archivo----------------
             else if (accion.equals("Guardar")) {
+                items[0]=elementoItem;
                 elementoItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -364,6 +372,7 @@ public final class Panel extends JPanel {
                 });
                 //boton de guardare como
             } else if (accion.equals("Guardar como")) {
+                items[1]=elementoItem;
                 elementoItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -393,6 +402,7 @@ public final class Panel extends JPanel {
         } else if (menu.equals("Editar")) {
             editar.add(elementoItem);
             if (accion.equals("deshacer")) {
+                items[2]=elementoItem;
                 elementoItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -404,6 +414,7 @@ public final class Panel extends JPanel {
                     }
                 });
             } else if (accion.equals("rehacer")) {
+                items[3]=elementoItem;
                 elementoItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
@@ -415,13 +426,17 @@ public final class Panel extends JPanel {
                 });
                 //DefaultEditorKit implementa clases para relizar las acciones de cortar, copiar y pegar
             } else if (accion.equals("cortar")) {
+                items[4]=elementoItem;
                 elementoItem.addActionListener(new DefaultEditorKit.CutAction());
             } else if (accion.equals("copiar")) {
+                items[5]=elementoItem;
                 elementoItem.addActionListener(new DefaultEditorKit.CopyAction());
             } else if (accion.equals("pegar")) {
+                items[6]=elementoItem;
                 elementoItem.addActionListener(new DefaultEditorKit.PasteAction());
             }
         } else if (menu.equals("Seleccion")) {
+            items[7]=elementoItem;
             seleccion.add(elementoItem);
             if (accion.equals("seleccion")) {
                 elementoItem.addActionListener(new ActionListener() {
@@ -473,7 +488,6 @@ public final class Panel extends JPanel {
 
         ventana = new JPanel();
         ventana.setLayout(new BorderLayout());
-        
         listFile.add(new File(""));
         ListAreaText.add(new JTextPane());
         listScroll.add(new JScrollPane(ListAreaText.get(contadorPanel)));
@@ -519,4 +533,5 @@ public final class Panel extends JPanel {
     private JSlider slider;
     
     private JPopupMenu menuEmergente;
+    private JMenuItem items[];
 }
