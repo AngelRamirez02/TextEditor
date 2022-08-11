@@ -193,8 +193,42 @@ public final class Panel extends JPanel {
         panelExtra.add(panelIzquierdo, BorderLayout.WEST);
         panelExtra.add(panelCentro, BorderLayout.CENTER);
         //------------------------------------------------------------------
-
-        //--------------------Metodos de añadir-------------
+        
+        //-------------MENU EMERGENTE-------------------------------------
+        menuEmergente = new JPopupMenu();
+        JMenuItem cortar = new JMenuItem("Cortar");
+        JMenuItem copiar = new JMenuItem("Copiar");
+        JMenuItem pegar = new JMenuItem("Pegar");
+        JMenuItem deshacerI = new JMenuItem("Deshacer");
+        JMenuItem rehacer = new JMenuItem("Rehacer");
+        
+        cortar.addActionListener(new DefaultEditorKit.CutAction());
+        copiar.addActionListener(new DefaultEditorKit.CopyAction());
+        pegar.addActionListener(new DefaultEditorKit.PasteAction());
+        deshacerI.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ListManager.get(tpanel.getSelectedIndex()).canUndo()){//if para verificar si se pueden deshacer cambios                
+                    ListManager.get(tpanel.getSelectedIndex()).undo();//undo para deshacer
+                }
+            }
+        });
+        rehacer.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (ListManager.get(tpanel.getSelectedIndex()).canRedo()){//if para verificar si se pueden rehacer cambios
+                    ListManager.get(tpanel.getSelectedIndex()).redo();//redo para rehacer  
+                }
+            }
+        });
+        menuEmergente.add(cortar);
+        menuEmergente.add(copiar);
+        menuEmergente.add(pegar);   
+        menuEmergente.add(deshacerI);
+        menuEmergente.add(rehacer);
+        //--------------------------------------------------------
+        
+        //--------------------Metodos de añadir--------------------------
         add(panelMenu, BorderLayout.NORTH);
         add(tpanel, BorderLayout.CENTER);
         add(herramientas, BorderLayout.WEST);
@@ -362,6 +396,7 @@ public final class Panel extends JPanel {
                 elementoItem.addActionListener(new ActionListener() {
                     @Override
                     public void actionPerformed(ActionEvent e) {
+                        
                         if (ListManager.get(tpanel.getSelectedIndex()).canUndo())//if para verificar si se pueden deshacer cambios
                         {
                             ListManager.get(tpanel.getSelectedIndex()).undo();//undo para deshacer
@@ -445,7 +480,8 @@ public final class Panel extends JPanel {
         ListManager.add(new UndoManager());//sirve para rastrear los cambios del area de texto
         
         ListAreaText.get(contadorPanel).getDocument().addUndoableEditListener(ListManager.get(contadorPanel));
-
+        ListAreaText.get(contadorPanel).setComponentPopupMenu(menuEmergente);
+        
         ventana.add(listScroll.get(contadorPanel), BorderLayout.CENTER);
         tpanel.addTab("Archivo", ventana);
         
@@ -481,4 +517,6 @@ public final class Panel extends JPanel {
     private boolean estadoAlfiler=false;
     private JLabel labelAlfiler;
     private JSlider slider;
+    
+    private JPopupMenu menuEmergente;
 }
